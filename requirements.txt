@@ -2,3 +2,4 @@ streamlit==1.14.0
 pandas==2.2.3
 numpy==1.24.3
 altair==4.2.2
+mysql-connector-python
