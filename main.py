@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import mysql.connector
 
-# Connexion à la base de données
 conn = mysql.connector.connect(
     host='35.240.113.82',
     user='root',
@@ -11,7 +10,6 @@ conn = mysql.connector.connect(
 )
 cursor = conn.cursor()
 
-# Mapping des colonnes
 COLUMN_MAPPING = {
     "Linked Url": "Linkedin",
     "Full Name": "Full_Name",
@@ -45,32 +43,25 @@ COLUMN_MAPPING = {
 def streamlit_app():
     st.title("Uploader et sauvegarder un fichier CSV dans la base de données")
 
-    # Téléchargement du fichier
     uploaded_file = st.file_uploader("Mettez votre fichier CSV ou Excel", type=['csv', 'xlsx'])
 
     if uploaded_file:
         try:
-            # Lire le fichier
             if uploaded_file.name.endswith(".csv"):
                 df = pd.read_csv(uploaded_file)
             elif uploaded_file.name.endswith(".xlsx"):
                 df = pd.read_excel(uploaded_file)
 
-            # Ajouter une colonne "Source" vide
             df.insert(0, "Source", uploaded_file.name)
 
-            # Nettoyer les colonnes et remplacer NaN
             df.columns = df.columns.str.strip()
             df = df.fillna("")
 
-            # Renommer les colonnes
             df.rename(columns=COLUMN_MAPPING, inplace=True)
 
-            # Afficher les données nettoyées
             st.success("Fichier téléchargé et nettoyé avec succès !")
             st.write(df.head())
 
-            # Insérer les données dans la base
             for _, row in df.iterrows():
                 sql = """
                     INSERT INTO CSV_Info (
